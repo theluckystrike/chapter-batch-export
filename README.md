@@ -60,7 +60,7 @@ Presets stay saved when Pro is off. The free export uses its default formats and
 
 For manual installation, put `main.js`, `manifest.json` and `styles.css` in `<vault>/.obsidian/plugins/chapter-batch-export/`. Enable Chapter Batch Export in Community plugins. The minimum supported desktop version is Obsidian 1.13.4.
 
-After directory publication, you can use Community plugins → Browse to search for Chapter Batch Export. Longform does not need to be enabled for this exporter to read an index in its supported format.
+You can also search for Chapter Batch Export in Community plugins → Browse. Longform does not need to be enabled for this exporter to read an index in its supported format.
 
 ## Usage
 
@@ -75,6 +75,8 @@ The index must have initial YAML frontmatter with `longform.format: scenes`, a `
 The exporter reads selected sources again before writing. If the preview plan changed, it asks for a new preview. Refresh after a source edit or a change to the export options.
 
 ## Settings
+
+After a minor or major update, this plugin opens one What's new tab in the background. The tab and settings card suggest other NoteMods plugins and Zovo Chat and link to notemods.com for feedback ([privacy](https://notemods.com/privacy/)). The tab sends no data. Turn the tab off in Settings.
 
 The settings tab holds the default output folder and GitHub Sponsors controls. The export dialog has a separate foldout for Pro options. Free preview and full chapter export need no account.
 

@@ -1,6 +1,6 @@
 {
 	"name": "chapter-batch-export",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"private": true,
 	"description": "Save each manuscript chapter as a separate Markdown file.",
 	"main": "main.js",

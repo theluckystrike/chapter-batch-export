@@ -5,6 +5,8 @@ import { DEFAULT_OPTIONS, buildPlan, chapterSources, outputFolder, type ExportOp
 import { DEFAULT_SETTINGS, ChapterBatchExportSettingTab, normalizeSettings, type ChapterBatchExportSettings } from './settings';
 import { SPONSORS, bindPro, isPro, resetPro } from './pro';
 import { ExportModal } from './modal';
+import { setupHello } from './hello/index';
+import WHATS_NEW from './whats-new.json';
 export interface Preview { indexPath: string; options: ExportOptions; plan: ExportPlan; pro: boolean }
 export default class ChapterBatchExportPlugin extends Plugin {
 	settings: ChapterBatchExportSettings = { ...DEFAULT_SETTINGS, presets: [] };
@@ -12,6 +14,8 @@ export default class ChapterBatchExportPlugin extends Plugin {
 	private busy = false;
 	readonly modals = new Set<ExportModal>();
 	async onload(): Promise<void> {
+		// First: "What's new" reads its state before the settings load (packages/hello). It does not wait.
+		setupHello(this, WHATS_NEW);
 		await this.loadSettings();
 		const pro = createGitHubSponsors(this.app, this.manifest.id, SPONSORS, this); pro.init(); this.pro = pro; bindPro(pro);
 		const tab = new ChapterBatchExportSettingTab(this.app, this); this.addSettingTab(tab);

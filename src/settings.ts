@@ -3,6 +3,7 @@ import { sponsorsSettingItems } from './license/github-obsidian';
 import { DEFAULT_OPTIONS, type ExportOptions } from './core';
 import { PRO_UI } from './pro';
 import type ChapterBatchExportPlugin from './main';
+import { helloSettingItems } from './hello/settings';
 export interface Preset extends ExportOptions { name: string }
 export interface ChapterBatchExportSettings { outputFolder: string; presets: Preset[] }
 export const DEFAULT_SETTINGS: ChapterBatchExportSettings = { outputFolder: DEFAULT_OPTIONS.folder, presets: [] };
@@ -14,6 +15,11 @@ export class ChapterBatchExportSettingTab extends PluginSettingTab {
 	plugin: ChapterBatchExportPlugin;
 	constructor(app: ConstructorParameters<typeof PluginSettingTab>[0], plugin: ChapterBatchExportPlugin) { super(app, plugin); this.plugin = plugin; }
 	getSettingDefinitions(): SettingDefinitionItem[] {
+		// The product rows, then the "More from NoteMods" card (packages/hello).
+		return [...this.productSettingDefinitions(), ...helloSettingItems()];
+	}
+
+	productSettingDefinitions(): SettingDefinitionItem[] {
 		return [{ name: 'Output folder', desc: 'Default name for a new folder in the vault. Its parent folder must exist.', control: { type: 'text', key: 'outputFolder', defaultValue: DEFAULT_OPTIONS.folder } }, ...(this.plugin.pro ? sponsorsSettingItems(this.plugin.pro, PRO_UI) : [])];
 	}
 }
