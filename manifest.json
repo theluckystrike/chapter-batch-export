@@ -1,7 +1,7 @@
 {
 	"id": "chapter-batch-export",
 	"name": "Chapter Batch Export",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"minAppVersion": "1.13.4",
 	"description": "Save each manuscript chapter as a separate Markdown file.",
 	"author": "Michael Lip",

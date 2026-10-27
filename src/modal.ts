@@ -1,6 +1,6 @@
 import { Modal, Notice, Setting, type TFile, type ButtonComponent } from 'obsidian';
 import { DEFAULT_OPTIONS, type ExportOptions } from './core';
-import { isPro, onProChange } from './pro';
+import { isPro, onProChange, PRO_LEAD, proNotice, proText } from './pro';
 import type ChapterBatchExportPlugin from './main';
 import type { Preview } from './main';
 
@@ -35,22 +35,24 @@ export class ExportModal extends Modal {
 		const proPanel = this.contentEl.createEl('details', { cls: 'cbe-pro' });
 		proPanel.createEl('summary', { text: 'Export presets and formats (pro)' });
 		proPanel.open = isPro();
-		if (!isPro()) proPanel.createEl('p', { text: 'The full chapter export is free. Named presets, chapter ranges, and formats need pro. Sign in from the plugin settings.', cls: 'cbe-muted' });
+		if (!isPro()) proPanel.createEl('p', { text: proText('The full chapter export is free. Named presets, chapter ranges, and formats need pro.'), cls: 'cbe-muted' });
 		this.field('Chapter range (pro)', 'Empty selects the root chapters. Example: 1-3, 5.', 'range', true, proPanel);
 		this.field('Heading format (pro)', 'Use {title} and {number}. Empty adds no chapter heading.', 'heading', true, proPanel);
 		this.field('Filename format (pro)', 'Use {title} and {number}. The .md extension is added.', 'filename', true, proPanel);
 		new Setting(proPanel).setName('Named presets (pro)').addDropdown((select) => {
 			select.addOption('', 'Choose a preset');
 			for (const preset of this.plugin.settings.presets) select.addOption(preset.name, preset.name);
-			select.setValue(this.selectedPreset).setDisabled(!isPro()).onChange((name) => {
-				if (!isPro()) return;
+			select.setValue(this.selectedPreset).onChange((name) => {
+				// A free user can open the list. A select shows the Pro notice and the list goes back. setValue fires no change.
+				if (!isPro()) { select.setValue(this.selectedPreset); proNotice(PRO_LEAD); return; }
 				this.selectedPreset = name;
 				const preset = this.plugin.settings.presets.find((p) => p.name === name);
 				if (preset) { this.options = { folder: preset.folder, range: preset.range, heading: preset.heading, filename: preset.filename }; this.draw(); void this.refresh(); }
 			});
 		});
 		let presetName = '';
-		new Setting(proPanel).setName('Save preset (pro)').addText((text) => text.setPlaceholder('Preset name').setDisabled(!isPro()).onChange((value) => { presetName = value; })).addButton((button) => button.setButtonText('Save preset').setDisabled(!isPro()).onClick(async () => {
+		new Setting(proPanel).setName('Save preset (pro)').addText((text) => text.setPlaceholder('Preset name').onChange((value) => { presetName = value; })).addButton((button) => button.setButtonText('Save preset').onClick(async () => {
+			if (!isPro()) { proNotice(PRO_LEAD); return; }
 			try { await this.plugin.savePreset(presetName, this.options); this.selectedPreset = presetName.trim(); new Notice('Saved the export preset.'); this.draw(); await this.refresh(); }
 			catch (error) { this.showError(error); }
 		}));
@@ -70,12 +72,26 @@ export class ExportModal extends Modal {
 	private field(name: string, desc: string, key: keyof ExportOptions, pro: boolean, container = this.contentEl): void {
 		new Setting(container).setName(name).setDesc(desc).addText((text) => {
 			text.inputEl.dataset.field = key;
-			text.setValue(this.options[key]).setDisabled(pro && !isPro()).onChange((value) => {
+			if (pro && !isPro()) {
+				// A free user can select the field. It is read-only, and a click or a typed key shows the Pro notice.
+				text.inputEl.readOnly = true;
+				text.inputEl.addEventListener('click', () => this.refuse(key));
+				text.inputEl.addEventListener('keydown', (event) => { if (event.key.length === 1 || event.key === 'Backspace' || event.key === 'Delete') this.refuse(key); });
+			}
+			text.setValue(this.options[key]).onChange((value) => {
 				if (this.saving || (pro && !isPro())) return;
 				this.options[key] = value; this.revision++; this.preview = null; this.exportButton.setDisabled(true);
 				this.message.setText('Options changed. Refresh the preview before you save.'); this.message.dataset.status = 'changed';
 			});
 		});
+	}
+	private refused = { key: '', at: 0 };
+	/** Shows the Pro notice for a read-only Pro field. Keys right after a notice for the same field show no second notice. */
+	private refuse(key: string): void {
+		const now = Date.now();
+		if (this.refused.key === key && now - this.refused.at < 3000) return;
+		this.refused = { key, at: now };
+		proNotice(PRO_LEAD);
 	}
 	private showError(error: unknown): void {
 		this.message.setText(error instanceof Error ? error.message : String(error));

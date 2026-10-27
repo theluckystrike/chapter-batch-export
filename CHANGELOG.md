@@ -1,5 +1,11 @@
 # chapter-batch-export
 
+## 1.1.1
+
+### Patch Changes
+
+- a2ee60e: The Pro fields, the preset list and Save preset of the export window can now be selected without Pro. They show how to get Pro, with a Sponsor on GitHub button. No option changes and nothing is saved.
+
 ## 1.1.0
 
 ### Minor Changes

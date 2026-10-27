@@ -78,7 +78,7 @@ The exporter reads selected sources again before writing. If the preview plan ch
 
 After a minor or major update, this plugin opens one What's new tab in the background. The tab and settings card suggest other NoteMods plugins and Zovo Chat and link to notemods.com for feedback ([privacy](https://notemods.com/privacy/)). The tab sends no data. Turn the tab off in Settings.
 
-The settings tab holds the default output folder and GitHub Sponsors controls. The export dialog has a separate foldout for Pro options. Free preview and full chapter export need no account.
+The settings tab holds the default output folder and GitHub Sponsors controls. The export dialog has a separate foldout for Pro options. Without Pro, its controls show a Sponsor on GitHub notice and change nothing. Free preview and full chapter export need no account.
 
 Output folders are vault paths. Use a visible new folder with an existing parent. Parent path steps such as `..` are refused. Pro formats accept a single line and the two supported tokens. Unknown tokens and out of range chapter numbers stop the preview.
 
