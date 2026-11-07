@@ -14,7 +14,7 @@ vi.mock('obsidian', async (importOriginal) => ({
 // A free user can select the Pro controls of the export window: the 3 format fields, the preset list and Save preset.
 // The select shows the shared Pro notice with the "Sponsor on GitHub" button. No value changes, nothing is saved,
 // and the preview and Save chapters stay ready. A Pro user edits the fields and saves the preset as before.
-const PITCH = 'Sponsor on GitHub, then sign in from the plugin settings.';
+const PITCH = 'One payment turns on Pro in every NoteMods plugin. Sponsor on GitHub, then sign in from the plugin settings.';
 const LEAD = 'Named presets, chapter ranges and formats need Pro.';
 
 function fakePro(pro: boolean): SponsorsManager {
